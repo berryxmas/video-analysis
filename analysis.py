@@ -54,6 +54,10 @@ while True:
     boxes = detector(frame_rgb, 0)
 
     for box in boxes:
+        # Draw a green rectangle around the detected face
+        x, y, w, h = box.left(), box.top(), box.width(), box.height()
+        cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+
         # Get the facial landmarks for the detected face
         shape = predictor(frame_rgb, box)
 
@@ -70,6 +74,9 @@ while True:
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             print(f"[{timestamp}] Detected: {matches[0][1]}")
             last_print_time = current_time
+            
+            # Draw a red rectangle around the detected face
+            cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 0, 255), 2)
 
     # Display the resulting frame
     cv2.imshow('Video', frame)
