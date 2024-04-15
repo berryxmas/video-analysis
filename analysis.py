@@ -3,18 +3,22 @@ import dlib
 import numpy as np
 import datetime
 import time
+import logging
+
+# Set up logging
+logging.basicConfig(filename='log.txt', level=logging.INFO, format='%(message)s')
 
 # Load the detector
 detector = dlib.get_frontal_face_detector()
 
 # Load the predictor
-predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+predictor = dlib.shape_predictor("models/shape_predictor_68_face_landmarks.dat")
 
 # Load the face recognition model
-face_rec_model = dlib.face_recognition_model_v1("dlib_face_recognition_resnet_model_v1.dat")
+face_rec_model = dlib.face_recognition_model_v1("models/dlib_face_recognition_resnet_model_v1.dat")
 
 # Load the images and labels
-images = [cv2.imread(f"{person}{num}.jpeg") for person in ["rutte", "wilders"] for num in range(1, 3)]
+images = [cv2.imread(f"content/{person}{num}.jpeg") for person in ["rutte", "wilders"] for num in range(1, 3)]
 labels = ["Rutte", "Rutte", "Wilders", "Wilders"]  # Adjusted to match each image
 
 # Initialize an empty list to store face encodings
@@ -36,7 +40,7 @@ for image in images:
         face_encodings.append(face_encoding)
 
 # Initialize video capture
-cap = cv2.VideoCapture('trimmed_video2.mp4')
+cap = cv2.VideoCapture('content/trimmed_video2.mp4')
 
 # Timing control variables
 print_interval = 3  # seconds
@@ -72,7 +76,9 @@ while True:
         current_time = time.time()
         if matches[0][0] < 0.6 and (current_time - last_print_time) > print_interval:
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            print(f"[{timestamp}] Detected: {matches[0][1]}")
+            message = f"[{timestamp}] Detected: {matches[0][1]}"
+            print(message)
+            logging.info(message)  # Log the message
             last_print_time = current_time
             
             # Draw a red rectangle around the detected face
